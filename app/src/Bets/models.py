@@ -1,6 +1,6 @@
 from django.db import models
 from AUTH.models import Account
-from Data.models import Event, EventTeam, EventTeamBet, Bookmaker, InfoSponsor
+from Data.models import EventTeam
 
 
 class Bet(models.Model):

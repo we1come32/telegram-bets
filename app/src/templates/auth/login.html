@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load custom %}
+
+{% extends 'login.html' %}
+
+{% block body %}
+    <div class="auth-form form">
+        <form name="auth">
+            <label>{% trans "Login" %}</label>
+            <input name="login" type="text">
+            <label>{% trans "Password" %}</label>
+            <input name="password" type="password">
+            <button class="btn btn-info">{% trans "Log in" %}</button>
+        </form>
+    </div>
+{% endblock body %}
+
+<script type="application/javascript">
+    document.forms.auth.maxtries = 3;
+    document.forms.auth.blocked = false;
+    document.forms.auth.blockeddelay = 30;
+    document.forms.auth.tries = 0;
+    document.forms.auth.onsubmit = function () {
+        var login = this.elements.login;
+        var password = this.element.password;
+        if (document.forms.auth.blocked) {
+            if (moment.now() + document.forms.auth.blockeddelay > document.forms.auth.blocked)
+            toastr.warning('{% trans "You were used max tries. Please, wait %s seconds to auth again" %}', '');
+            return false;
+        }
+        $.ajax({
+            url: '/api/auth.login',
+            type: "POST",
+            data: {
+                'login': login,
+                'password': password,
+                'csrfmiddlewaretoken': $.cookie('csrftoken')
+            }
+        }).success(function(data) {
+            if (data.status == 'Ok') {
+                document.location.reload();
+                return false;
+            }
+            document.forms.auth.tries += 1;
+            toastr.error('{% trans "Invalid password" %}', '');
+            if (document.forms.auth.tries == document.forms.auth.maxtries) {
+                document.forms.auth.blocked = moment.now();
+                toastr.error('{% trans "You were used max tries. Please, wait {seconds} seconds to auth again" %}'.formatUnicorn({
+                    seconds: Math.round(moment.now() + document.forms.auth.blockeddelay - document.forms.auth.blocked)
+                }), '');
+                setTimeout(function() {
+                    document.forms.auth.tries = 0;
+                    document.forms.auth.blockeddelay *= 2;
+                    toastr.error('{% trans "You can login again. Please, check your password before log in" %}','')
+                }, document.forms.auth.blockeddelay*1000)
+            }
+        }).error(function () {
+        })
+        return false;
+    }
+</script>
+{% block script %}
+{% endblock script %}

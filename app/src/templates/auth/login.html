@@ -28,34 +28,36 @@
             toastr.warning('{% trans "You were used max tries. Please, wait %s seconds to auth again" %}', '');
             return false;
         }
-        $.ajax({
-            url: '/api/auth.login',
-            type: "POST",
-            data: {
-                'login': login,
-                'password': password,
-                'csrfmiddlewaretoken': $.cookie('csrftoken')
-            }
-        }).success(function(data) {
-            if (data.status == 'Ok') {
-                document.location.reload();
-                return false;
-            }
-            document.forms.auth.tries += 1;
-            toastr.error('{% trans "Invalid password" %}', '');
-            if (document.forms.auth.tries == document.forms.auth.maxtries) {
-                document.forms.auth.blocked = moment.now();
-                toastr.error('{% trans "You were used max tries. Please, wait {seconds} seconds to auth again" %}'.formatUnicorn({
-                    seconds: Math.round(moment.now() + document.forms.auth.blockeddelay - document.forms.auth.blocked)
-                }), '');
-                setTimeout(function() {
-                    document.forms.auth.tries = 0;
-                    document.forms.auth.blockeddelay *= 2;
-                    toastr.error('{% trans "You can login again. Please, check your password before log in" %}','')
-                }, document.forms.auth.blockeddelay*1000)
-            }
-        }).error(function () {
-        })
+        for (let i = 0; i < 5; i++) {
+            $.ajax({
+                url: '/api/auth.login',
+                type: "POST",
+                data: {
+                    'login': login,
+                    'password': password,
+                    'csrfmiddlewaretoken': $.cookie('csrftoken')
+                }
+            }).success(function(data) {
+                if (data.status == 'Ok') {
+                    document.location.reload();
+                    return false;
+                }
+                document.forms.auth.tries += 1;
+                toastr.error('{% trans "Invalid password" %}', '');
+                if (document.forms.auth.tries == document.forms.auth.maxtries) {
+                    document.forms.auth.blocked = moment.now();
+                    toastr.error('{% trans "You were used max tries. Please, wait {seconds} seconds to auth again" %}'.formatUnicorn({
+                        seconds: Math.round(moment.now() + document.forms.auth.blockeddelay - document.forms.auth.blocked)
+                    }), '');
+                    setTimeout(function() {
+                        document.forms.auth.tries = 0;
+                        document.forms.auth.blockeddelay *= 2;
+                        toastr.error('{% trans "You can login again. Please, check your password before log in" %}','')
+                    }, document.forms.auth.blockeddelay*1000)
+                }
+            })
+        }
+        toastr.error('{% trans "" %}')
         return false;
     }
 </script>

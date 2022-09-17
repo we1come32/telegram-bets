@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*a1gz6*k&-9^1t3s^=i1hyo)%75do2!cti+7iovbf3+rnpom%v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get("DEBUG", default=0))
+DEBUG = int(os.environ.get("DEBUG", default=True))
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", '*').split(" ")
 
 ALLOWED_HOSTS = ["*"]
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'Data.apps.DataConfig',
     'Telegram.apps.TelegramConfig',
     'API.apps.ApiConfig',
+    'Default'
 ]
 
 MIDDLEWARE = [

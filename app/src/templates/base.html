@@ -1,8 +1,12 @@
+{% load i18n %}
+{% load custom %}
+{% set MEDIA_URL="media" %}
 <!DOCTYPE html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="color-scheme" content="light dark">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock title %}</title>
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/bootstrap-grid.min.css">
@@ -13,38 +17,98 @@
     {% endblock styles %}
 </head>
 <body>
-    <div id="body" style="display: none">
-        {% block body %}
-        <div class="header">
-            <div class="logo"></div>
-            <div class="buttons">
-                <div class="profile">
-                    {% if user %}
-                    {% else %}
-                    <ul>
-                        <li>{% trans "Log in" %}</li>
-                        <li>Sing up</li>
-                    </ul>
-                    {% endif %}
-                </div>
+    {% block body %}
+    <div class="header">
+        <div class="logo"></div>
+        <div class="loader">
+            <img src="/static/img/loader.png" />
+        </div>
+        <div class="buttons">
+            <div class="profile">
+                {% if user %}
+                <ul>
+                    <li>
+                        <div class="profile">
+                            <img src="{{ MEDIA_URL }}">
+                        </div>
+                    </li>
+                </ul>
+                {% else %}
+                <ul>
+                    <li>{% trans "Log in" %}</li>
+                    <li>{% trans "Sing up" %}</li>
+                </ul>
+                {% endif %}
             </div>
         </div>
-        <div class="body">
-            <div class="content">
-                {% block content %}
-                {% endblock content %}
-            </div>
-        </div>
-        {% endblock body %}
     </div>
+    <div class="body">
+        <div class="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+    {% endblock body %}
     {% block scripts %}
     {% endblock scripts %}
     {% block tail-scripts %}
     {% endblock tail-scripts %}
-    <script>
+    <script type="application/javascript" href="{{ STATIC_URL }}/js/jquery-3.6.1.min.js"></script>
+    <script type="application/javascript" href="{{ STATIC_URL }}/js/bootstrap.min.js"></script>
+    <script type="application/javascript" href="{{ STATIC_URL }}/js/toastr.min.js"></script>
+    <script type="application/javascript">
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": false,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "3000",
+            "timeOut": "10000",
+            "extendedTimeOut": "10000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        {% if user %}
         $(document).onload(function () {
-            $('#body').show()
+            var messageReload = function() {
+                $.ajax({
+                    url: "/api/messages.get",
+                    type: "POST",
+                    data: {
+                        user: {{ user.id }},
+                        last_message_id: {{ user.other.last_readed_message_id }},
+                        csrfmiddlewaretoken: $.cookie('csrftoken')
+                    }
+                }).success(function (data) {
+                    if (data.count) {
+                        for (let i=0; i < data.count; i++){
+                            var msg = data.items[i];
+                            toastr.notify(msg.text, msg.title, msg.tag);
+                        }
+                    }
+                }).error(function(x, tmp2, tmp3) {
+                    if (x.status) {
+                        console.log(tmp2, tmp3)
+                    } else {
+                        console.log(x.status, x.data)
+                    }
+                }).complete(function () {
+                    setTimeout(messageReload, 5000);
+                })
+            }
+            messageReload();
         })
+        {% endif %}
+    {% if messages %}
+    {% for message in messages %}
+    {% endfor %}
+    {% endif %}
     </script>
 </body>
 </html>

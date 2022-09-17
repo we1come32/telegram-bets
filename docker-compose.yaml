@@ -12,6 +12,22 @@ services:
     ports:
       - "8000:8000"
     command: ["python3", "./src/manage.py", "runserver", "0.0.0.0:8000"]
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - postgresql
+
+  postgresql:
+    restart: always
+    image: postgres:14.5
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   worker:
     restart: always

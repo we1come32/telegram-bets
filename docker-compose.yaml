@@ -11,7 +11,9 @@ services:
       context: ./app
     ports:
       - "8000:8000"
-    command: ["python3", "./src/manage.py", "runserver", "0.0.0.0:8000"]
+    env_file:
+      - ./.env.dev
+    command: gunicorn BetBot.wsgi:application --bind 0.0.0.0:8000
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
@@ -23,7 +25,7 @@ services:
     restart: always
     image: postgres:14.5
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./app/data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -34,3 +36,12 @@ services:
     build:
       context: ./app
     command: ['celery', '--workdir=./src', '-A', 'BetBot', 'worker']
+    depends_on:
+      - webapp
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - webapp

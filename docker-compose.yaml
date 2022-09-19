@@ -35,7 +35,7 @@ services:
     restart: always
     build:
       context: ./app
-    command: ['celery', '--workdir=./src', '-A', 'BetBot', 'worker']
+    command: ['celery', '--workdir=/opt/webapp', '-A', 'BetBot', 'worker']
     depends_on:
       - webapp
 

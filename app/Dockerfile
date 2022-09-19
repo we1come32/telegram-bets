@@ -3,9 +3,9 @@ FROM python:3.10
 # upgrading and installing system dependens
 RUN apt-get update -y
 RUN apt-get upgrade -y
-# RUN apt-get install postgresql-dev gcc python3-dev musl-dev -y
+RUN apt install -y netcat
 
-RUN ['mkdir', '/opt/webapp']
+RUN mkdir /opt/webapp
 
 WORKDIR /opt/webapp
 
@@ -29,4 +29,4 @@ COPY src ./
 # run entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 
-RUN ["python3", "./manage.py", "migrate"]
+RUN python ./manage.py migrate

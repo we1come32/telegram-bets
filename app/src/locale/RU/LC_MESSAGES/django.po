@@ -22,34 +22,36 @@ msgstr ""
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 #: .\templates\auth\login.html:9
 msgid "Login"
-msgstr ""
+msgstr "Логин"
 
 #: .\templates\auth\login.html:11
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: .\templates\auth\login.html:13 .\templates\base.html:38
 msgid "Log in"
-msgstr ""
+msgstr "Авторизуйтесь"
 
 #: .\templates\auth\login.html:28
 #, python-format
-msgid "You were used max tries. Please, wait %%s seconds to auth again"
-msgstr ""
+msgid "You were used max tries. Please, wait %s seconds to auth again"
+msgstr "Вы использовали максимальное количество попыток. "
+       "Пожалуйста, подождите %s секунд для повторной авторизации"
 
 #: .\templates\auth\login.html:46
 msgid "Invalid password"
-msgstr ""
+msgstr "Неправильный пароль"
 
 #: .\templates\auth\login.html:49
 #, python-brace-format
 msgid "You were used max tries. Please, wait {seconds} seconds to auth again"
-msgstr ""
+msgstr "Вы использовали максимальное количество попыток. "
+       "Пожалуйста, подождите {seconds} секунд для повторной авторизации"
 
 #: .\templates\auth\login.html:55
-msgid "You can login again. Please, check your password before log in"
-msgstr ""
+msgid "You can log in again. Please, check your password before log in"
+msgstr "Вы можете снова войти в систему. Пожалуйста, проверьте пароль перед входом"
 
 #: .\templates\base.html:39
 msgid "Sing up"
-msgstr ""
+msgstr "Регистрация"

@@ -5,7 +5,7 @@
 
 {% block body %}
     <div class="auth-form form">
-        <form name="auth">
+        <form name="auth" action="POST">
             <label>{% trans "Login" %}</label>
             <input name="login" type="text">
             <label>{% trans "Password" %}</label>
@@ -52,9 +52,10 @@
                     setTimeout(function() {
                         document.forms.auth.tries = 0;
                         document.forms.auth.blockeddelay *= 2;
-                        toastr.error('{% trans "You can login again. Please, check your password before log in" %}','')
+                        toastr.error('{% trans "You can log in again. Please, check your password before log in" %}','')
                     }, document.forms.auth.blockeddelay*1000)
                 }
+                return false;
             })
         }
         toastr.error('{% trans "" %}')

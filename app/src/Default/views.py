@@ -1,8 +1,6 @@
-from django.shortcuts import render, HttpResponseRedirect
-
-# Create your views here.
+from django.shortcuts import render, redirect
 
 
 def started_redirect(request):
     # todo: redirect to name url
-    return HttpResponseRedirect(request, name="")
+    return redirect('bets')

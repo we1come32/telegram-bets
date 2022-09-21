@@ -46,3 +46,9 @@ services:
       - 1337:80
     depends_on:
       - webapp
+
+  selenium:
+    restart: always
+    image: selenium/standalone-firefox
+    ports:
+      - 4444:4444
